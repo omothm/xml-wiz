@@ -1,3 +1,3 @@
-# xml-gen
+# xml-wiz
 
 XML Generator
