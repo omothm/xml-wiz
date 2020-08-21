@@ -1,6 +1,6 @@
 {
   "name": "xml-wiz",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "XML generator",
   "main": "./src/index.js",
   "scripts": {
@@ -14,7 +14,7 @@
     "xml"
   ],
   "author": "Omar Othman (omothm.com)",
-  "license": "ISC",
+  "license": "GPL-3.0",
   "bugs": {
     "url": "https://github.com/omothm/xml-wiz/issues"
   },
