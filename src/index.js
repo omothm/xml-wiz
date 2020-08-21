@@ -39,7 +39,7 @@ const extractNamespaces = (node, _namespaces) => {
   return namespaces;
 };
 
-const xmlifyRecurse = (node, namespaces, isRoot = false) => {
+const xmlWizRecurse = (node, namespaces, isRoot = false) => {
   if (!node.name) {
     throw new Error('node does not have a `name` property');
   }
@@ -61,21 +61,21 @@ const xmlifyRecurse = (node, namespaces, isRoot = false) => {
   if ('children' in node) {
     if (Array.isArray(node.children)) {
       node.children.forEach((child) => {
-        string += xmlifyRecurse(child, namespaces);
+        string += xmlWizRecurse(child, namespaces);
       });
     } else if (isString(node.children)) {
       string += node.children;
     } else {
-      string += xmlifyRecurse(node.children, namespaces);
+      string += xmlWizRecurse(node.children, namespaces);
     }
   }
   string += `</${prefix}${node.name}>`;
   return string;
 };
 
-const xmlify = (node) => {
+const xmlWiz = (node) => {
   const namespaces = extractNamespaces(node, {});
-  return xmlifyRecurse(node, namespaces, true);
+  return xmlWizRecurse(node, namespaces, true);
 };
 
-module.exports = xmlify;
+module.exports = xmlWiz;

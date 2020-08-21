@@ -1,5 +1,5 @@
 const assert = require('assert');
-const xmlify = require('../src');
+const xmlWiz = require('../src');
 
 describe('xmlify()', () => {
   it('should build a valid XML', () => {
@@ -36,6 +36,6 @@ describe('xmlify()', () => {
     n1.children = [n2, n3];
 
     const expected = '<ns1:Root xmlns:ns1="http://ns1.com" xmlns:ns2="http://ns5.com" xmlns:ns3="http://ns2.com" ns2:attr2="Yes"><ns1:Child1 ns3:attr1="3"></ns1:Child1><ns3:Child2>Test3</ns3:Child2></ns1:Root>';
-    assert.equal(xmlify(n1), expected);
+    assert.equal(xmlWiz(n1), expected);
   });
 });
