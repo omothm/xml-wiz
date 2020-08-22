@@ -1,81 +1,118 @@
+/* eslint-disable max-len */
 const { isString } = require('./util');
 
-const processNamespace = (entity, namespaces) => {
-  let ns = '';
-  let isNewNamespace = false;
-  if (entity.ns) {
-    ns = namespaces[entity.ns];
-    if (!ns) {
-      ns = `ns${Object.keys(namespaces).length + 1}`;
-      isNewNamespace = true;
-    }
-  }
-  return { ns, isNewNamespace };
-};
-
-const extractNamespaces = (node, _namespaces) => {
-  const namespaces = _namespaces; // to keep the function pure
-  let { ns, isNewNamespace } = processNamespace(node, namespaces);
-  if (isNewNamespace) {
-    namespaces[node.ns] = ns;
+const getNamespaceSet = (node) => {
+  const namespaces = new Set();
+  if ('ns' in node) {
+    namespaces.add(node.ns);
   }
   if ('attributes' in node) {
     node.attributes.forEach((attribute) => {
-      ({ ns, isNewNamespace } = processNamespace(attribute, namespaces));
-      if (isNewNamespace) {
-        namespaces[attribute.ns] = ns;
+      if ('ns' in attribute) {
+        namespaces.add(attribute.ns);
       }
     });
   }
   if ('children' in node) {
     if (Array.isArray(node.children)) {
       node.children.forEach((child) => {
-        extractNamespaces(child, namespaces);
+        getNamespaceSet(child).forEach((ns) => namespaces.add(ns));
       });
     } else if (!isString(node.children)) {
-      extractNamespaces(node.children, namespaces);
+      getNamespaceSet(node.children).forEach((ns) => namespaces.add(ns));
     }
   }
   return namespaces;
 };
 
-const xmlWizRecurse = (node, namespaces, isRoot = false) => {
+const xmlWizRecurse = (node, namespaceMap, isRoot = false) => {
   if (!node.name) {
     throw new Error('node does not have a `name` property');
   }
   let namespaceDeclarations = '';
   if (isRoot) {
-    Object.entries(namespaces).forEach(([uri, prefix]) => {
+    Object.entries(namespaceMap).forEach(([uri, prefix]) => {
       namespaceDeclarations += ` xmlns:${prefix}="${uri}"`;
     });
   }
   let attributes = '';
   if ('attributes' in node) {
     node.attributes.forEach((attribute) => {
-      const prefix = attribute.ns ? `${namespaces[attribute.ns]}:` : '';
+      const prefix = attribute.ns ? `${namespaceMap[attribute.ns]}:` : '';
       attributes += ` ${prefix}${attribute.name}="${attribute.value}"`;
     });
   }
-  const prefix = node.ns ? `${namespaces[node.ns]}:` : '';
+  const prefix = node.ns ? `${namespaceMap[node.ns]}:` : '';
   let string = `<${prefix}${node.name}${namespaceDeclarations}${attributes}>`;
   if ('children' in node) {
     if (Array.isArray(node.children)) {
       node.children.forEach((child) => {
-        string += xmlWizRecurse(child, namespaces);
+        string += xmlWizRecurse(child, namespaceMap);
       });
     } else if (isString(node.children)) {
       string += node.children;
     } else {
-      string += xmlWizRecurse(node.children, namespaces);
+      string += xmlWizRecurse(node.children, namespaceMap);
     }
   }
   string += `</${prefix}${node.name}>`;
   return string;
 };
 
-const xmlWiz = (node) => {
-  const namespaces = extractNamespaces(node, {});
-  return xmlWizRecurse(node, namespaces, true);
+/**
+ * Generates an XML string for the structure whose root node is given.
+ *
+ * The function aggregates all namespace URIs in the whole tree, generates a numbered prefix for
+ * each URI, and then prefixes all namespaced nodes/attributes with the generated prefixes. This
+ * way, there is no need to worry about managing namespaces, it will be handled by the API.
+ *
+ * The format of the accepted XML node objects is as follows:
+ *
+ * |Key         |Type                               |Required|Description                          |
+ * |:-----------|:----------------------------------|:------:|:------------------------------------|
+ * |`name`      |string                             |**Yes** |The name of the node.                |
+ * |`ns`        |string                             |No      |The namespace URI of the node.       |
+ * |`attributes`|list of objects                    |No      |A list of the attrbutes associated with this node.|
+ * |`children`  |string \| object \| list of objects|No      |A string representing a textual content of the node, an object reprenting a single child node, or a list of objects representing child nodes.|
+ *
+ * The format of the accepted XML attribute objects is as follows:
+ *
+ * |Key    |Type  |Required|Description                        |
+ * |:------|:-----|:------:|:----------------------------------|
+ * |`name` |string|**Yes** |The name of the attribute          |
+ * |`ns`   |string|No      |The namespace URI of the attribute.|
+ * |`value`|string|**Yes** |The value of the attribute.        |
+ *
+ * **NOTE** - `ns` does NOT expect a prefix, but the URI of the namespace. Prefixes will be
+ * generated automatically.
+ * @param {object} root - The root node of the XML structure.
+ * @returns {string} An XML string.
+ * @example
+ * const NS_A = 'http://example.com/a';
+ * const NS_B = 'http://example.com/b';
+ * const node1 = { name: 'Node1', ns: NS_B, children: 'Hello there!' };
+ * const node2 = { name: 'Node2'};
+ * const root = {
+ *   name: 'Root',
+ *   ns: NS_A,
+ *   attributes: [
+ *     { name: 'attr1', ns: NS_A, value: '3' },
+ *   ],
+ *   children: [ node1, node2 ],
+ * };
+ * // returns: <ns1:Root xmlns:ns1="http://example.com/a" xmlns:ns2="http://example.com/b" ns1:attr1="3"><ns2:Node1>Hello there!</ns2:Node1><Node2></Node2></ns1:Root>
+ * const xml = xmlWiz(root);
+ */
+const xmlWiz = (root) => {
+  // Aggregate all namespaces to add them to the root node.
+  const namespaceSet = getNamespaceSet(root);
+  // Map each namespace to a prefix
+  const namespaceMap = {};
+  Array.from(namespaceSet).forEach((uri, idx) => {
+    namespaceMap[uri] = `ns${idx + 1}`;
+  });
+  // Recurse the XML structure and generate XML strings.
+  return xmlWizRecurse(root, namespaceMap, true);
 };
 
 module.exports = xmlWiz;

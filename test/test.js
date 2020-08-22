@@ -1,8 +1,17 @@
 const assert = require('assert');
 const xmlWiz = require('../src');
 
-describe('xmlify()', () => {
-  it('should build a valid XML', () => {
+describe('xmlWiz()', () => {
+  it('should build a valid XML (example 1)', () => {
+    const n1 = { name: 'Root' };
+    const n2 = { name: 'Child1' };
+    const n3 = { name: 'Child2' };
+    n1.children = [n2, n3];
+
+    const expected = '<Root><Child1></Child1><Child2></Child2></Root>';
+    assert.equal(xmlWiz(n1), expected);
+  });
+  it('should build a valid XML (example 2)', () => {
     const n1 = {
       name: 'Root',
       ns: 'http://ns1.com',
