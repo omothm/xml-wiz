@@ -71,17 +71,17 @@ const xmlWizRecurse = (node, namespaceMap, isRoot = false) => {
  * |Key         |Type                               |Required|Description                          |
  * |:-----------|:----------------------------------|:------:|:------------------------------------|
  * |`name`      |string                             |**Yes** |The name of the node.                |
- * |`ns`        |string                             |No      |The namespace URI of the node.       |
- * |`attributes`|list of objects                    |No      |A list of the attrbutes associated with this node.|
- * |`children`  |string \| object \| list of objects|No      |A string representing a textual content of the node, an object reprenting a single child node, or a list of objects representing child nodes.|
+ * |`ns`        |string                             |No      |The namespace URI of the node (not a prefix).|
+ * |`attributes`|list of objects                    |No      |A list of the attributes associated with this node.|
+ * |`children`  |string \| object \| list of objects|No      |A string representing a textual content of the node, an object representing a single child node, or a list of objects representing child nodes.|
  *
  * The format of the accepted XML attribute objects is as follows:
  *
- * |Key    |Type  |Required|Description                        |
- * |:------|:-----|:------:|:----------------------------------|
- * |`name` |string|**Yes** |The name of the attribute          |
- * |`ns`   |string|No      |The namespace URI of the attribute.|
- * |`value`|string|**Yes** |The value of the attribute.        |
+ * |Key    |Type  |Required|Description                                       |
+ * |:------|:-----|:------:|:-------------------------------------------------|
+ * |`name` |string|**Yes** |The name of the attribute                         |
+ * |`ns`   |string|No      |The namespace URI of the attribute (not a prefix).|
+ * |`value`|string|**Yes** |The value of the attribute.                       |
  *
  * **NOTE** - `ns` does NOT expect a prefix, but the URI of the namespace. Prefixes will be
  * generated automatically.
