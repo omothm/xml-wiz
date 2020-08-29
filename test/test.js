@@ -9,7 +9,7 @@ describe('xmlWiz()', () => {
     n1.children = [n2, n3];
 
     const expected = '<Root><Child1></Child1><Child2></Child2></Root>';
-    assert.equal(xmlWiz(n1), expected);
+    assert.strictEqual(xmlWiz(n1), expected);
   });
   it('should build a valid XML (example 2)', () => {
     const n1 = {
@@ -45,6 +45,6 @@ describe('xmlWiz()', () => {
     n1.children = [n2, n3];
 
     const expected = '<ns1:Root xmlns:ns1="http://ns1.com" xmlns:ns2="http://ns5.com" xmlns:ns3="http://ns2.com" ns2:attr2="Yes"><ns1:Child1 ns3:attr1="3"></ns1:Child1><ns3:Child2>Test3</ns3:Child2></ns1:Root>';
-    assert.equal(xmlWiz(n1), expected);
+    assert.strictEqual(xmlWiz(n1), expected);
   });
 });
