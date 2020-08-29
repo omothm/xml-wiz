@@ -1,5 +1,5 @@
 /* eslint-disable max-len */
-const { isString } = require('./util');
+const { arrayify, isString } = require('./util');
 
 const getNamespaceSet = (node) => {
   const namespaces = new Set();
@@ -7,7 +7,8 @@ const getNamespaceSet = (node) => {
     namespaces.add(node.ns);
   }
   if ('attributes' in node) {
-    node.attributes.forEach((attribute) => {
+    const attributes = arrayify(node.attributes);
+    attributes.forEach((attribute) => {
       if ('ns' in attribute) {
         namespaces.add(attribute.ns);
       }
@@ -35,15 +36,16 @@ const xmlWizRecurse = (node, namespaceMap, isRoot = false) => {
       namespaceDeclarations += ` xmlns:${prefix}="${uri}"`;
     });
   }
-  let attributes = '';
+  let attributesString = '';
   if ('attributes' in node) {
-    node.attributes.forEach((attribute) => {
+    const attributes = arrayify(node.attributes);
+    attributes.forEach((attribute) => {
       const prefix = attribute.ns ? `${namespaceMap[attribute.ns]}:` : '';
-      attributes += ` ${prefix}${attribute.name}="${attribute.value}"`;
+      attributesString += ` ${prefix}${attribute.name}="${attribute.value}"`;
     });
   }
   const prefix = node.ns ? `${namespaceMap[node.ns]}:` : '';
-  let string = `<${prefix}${node.name}${namespaceDeclarations}${attributes}>`;
+  let string = `<${prefix}${node.name}${namespaceDeclarations}${attributesString}>`;
   if ('children' in node) {
     if (Array.isArray(node.children)) {
       node.children.forEach((child) => {
@@ -72,7 +74,7 @@ const xmlWizRecurse = (node, namespaceMap, isRoot = false) => {
  * |:-----------|:----------------------------------|:------:|:------------------------------------|
  * |`name`      |string                             |**Yes** |The name of the node.                |
  * |`ns`        |string                             |No      |The namespace URI of the node (not a prefix).|
- * |`attributes`|list of objects                    |No      |A list of the attributes associated with this node.|
+ * |`attributes`|object \| list of objects          |No      |A single attribute or a list of the attributes associated with this node.|
  * |`children`  |string \| object \| list of objects|No      |A string representing a textual content of the node, an object representing a single child node, or a list of objects representing child nodes.|
  *
  * The format of the accepted XML attribute objects is as follows:
