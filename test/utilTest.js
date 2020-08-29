@@ -10,5 +10,8 @@ describe('util', () => {
       // eslint-disable-next-line no-new-wrappers
       assert.strictEqual(util.isString(new String('some string')), true);
     });
+    it('should return false when the value is an int', () => {
+      assert.strictEqual(util.isString(5), false);
+    });
   });
 });
