@@ -34,6 +34,7 @@ const n1 = { name: 'Root' };
 const n2 = { name: 'Child1' };
 const n3 = { name: 'Child2' };
 n1.children = [n2, n3];
+const xml = xmlWiz(n1);
 ```
 
 This generates the following XML (formatted for readability):
@@ -96,7 +97,7 @@ to work as expected.
 | :----------- | :---------------------------------- | :------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`       | string                              | **Yes**  | The name of the node.                                                                                                                                             |
 | `ns`         | string                              |    No    | The namespace URI of the node (not a prefix).                                                                                                                     |
-| `attributes` | list of objects                     |    No    | A list of the attributes associated with this node (formatted as described in these docs).                                                                        |
+| `attributes` | object \| list of objects           |    No    | A single attribute or a list of the attributes associated with this node (formatted as described in these docs).                                                  |
 | `children`   | string \| object \| list of objects |    No    | &bullet; A string representing a textual content.<br>&bullet; An object representing a single child node.<br>&bullet; A list of objects representing child nodes. |
 
 ### Attribute

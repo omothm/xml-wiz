@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.1.1 (Aug 29, 2020)
+
+Documentation:
+
+- Update README to reflect new features
+
 ## 1.1.0 (Aug 29, 2020)
 
 New features:
