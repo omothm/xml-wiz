@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.0 (Sep 1, 2020)
+
+New features:
+
+- `localNs` &mdash; a new property that can be added to a node to indicate that the node's namespace declaration (which may already be added to the outermost root node) is to be added to the node itself as well.<br>This may be useful in cases where a branch of the XML tree is expected to be 'cut' from the tree and used alone.
+
 ## 1.1.1 (Aug 29, 2020)
 
 Documentation:

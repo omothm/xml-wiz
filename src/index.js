@@ -35,7 +35,9 @@ const xmlWizRecurse = (node, namespaceMap, isRoot = false) => {
     Object.entries(namespaceMap).forEach(([uri, prefix]) => {
       namespaceDeclarations += ` xmlns:${prefix}="${uri}"`;
     });
-  }
+  } else if (node.localNs && 'ns' in node) {
+    namespaceDeclarations += ` xmlns:${namespaceMap[node.ns]}="${node.ns}"`
+  } 
   let attributesString = '';
   if ('attributes' in node) {
     const attributes = arrayify(node.attributes);
@@ -70,10 +72,11 @@ const xmlWizRecurse = (node, namespaceMap, isRoot = false) => {
  *
  * The format of the accepted XML node objects is as follows:
  *
- * |Key         |Type                               |Required|Description                          |
- * |:-----------|:----------------------------------|:------:|:------------------------------------|
- * |`name`      |string                             |**Yes** |The name of the node.                |
+ * |Key         |Type                               |Required|Description                                  |
+ * |:-----------|:----------------------------------|:------:|:--------------------------------------------|
+ * |`name`      |string                             |**Yes** |The name of the node.                        |
  * |`ns`        |string                             |No      |The namespace URI of the node (not a prefix).|
+ * |`localNs`   |boolean                            |No      |If `true`, the namespace declaration is added to the node (in addition to the root node).|
  * |`attributes`|object \| list of objects          |No      |A single attribute or a list of the attributes associated with this node.|
  * |`children`  |string \| object \| list of objects|No      |A string representing a textual content of the node, an object representing a single child node, or a list of objects representing child nodes.|
  *

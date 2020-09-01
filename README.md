@@ -97,6 +97,7 @@ to work as expected.
 | :----------- | :---------------------------------- | :------: | :---------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `name`       | string                              | **Yes**  | The name of the node.                                                                                                                                             |
 | `ns`         | string                              |    No    | The namespace URI of the node (not a prefix).                                                                                                                     |
+| `localNs`    | boolean                             |    No    | If `true`, the namespace declaration is added to the node (in addition to the root node).                                                                         |
 | `attributes` | object \| list of objects           |    No    | A single attribute or a list of the attributes associated with this node (formatted as described in these docs).                                                  |
 | `children`   | string \| object \| list of objects |    No    | &bullet; A string representing a textual content.<br>&bullet; An object representing a single child node.<br>&bullet; A list of objects representing child nodes. |
 
